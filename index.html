@@ -48,11 +48,25 @@
             text-align: center;
         }
         .footer-text {
+            font-size: 16px;
+            font-weight: bold;
             background: linear-gradient(45deg, #ff6b6b, #ff9f43, #feca57, #48dbfb, #1dd1a1, #f368e0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 16px;
-            font-weight: bold;
+            animation: gradient-animation 5s infinite;
+            background-size: 300%;
+        }
+
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -70,7 +84,7 @@
             <!-- Options will be dynamically populated -->
         </select>
     </div>
-    <footer><span class="footer-text">Made by Talha</span></footer>
+    <footer><span class="footer-text">Made By Talha</span></footer>
 
     <script>
         const PASSWORD = "Talha"; // Set your password here
