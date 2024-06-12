@@ -13,6 +13,7 @@
             height: 100vh;
             background-color: #f0f0f0;
             margin: 0;
+            flex-direction: column;
         }
         #login-form {
             display: flex;
@@ -33,6 +34,13 @@
             font-size: 16px;
             margin-top: 10px;
         }
+        #quality-levels {
+            margin-top: 20px;
+            display: none;
+        }
+        .quality-option {
+            margin-right: 10px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -43,6 +51,12 @@
         <button id="submit-btn">Submit</button>
     </div>
     <video id="my-video" controls width="640" height="264"></video>
+    <div id="quality-levels">
+        <h2>Select Quality</h2>
+        <select id="quality-options">
+            <!-- Options will be dynamically populated -->
+        </select>
+    </div>
 
     <script>
         const PASSWORD = "Talha"; // Set your password here
@@ -50,7 +64,9 @@
         const passwordInput = document.getElementById('password');
         const submitBtn = document.getElementById('submit-btn');
         const videoPlayer = document.getElementById('my-video');
-        const videoSrc = "https://f004.backblazeb2.com/file/switch-bucket/50de41c6-281f-11ef-9b58-6365c310f769.mp4?/(Talha)Poison.2024.Bengali.DP.720p.mp4";
+        const qualityLevels = document.getElementById('quality-levels');
+        const qualityOptions = document.getElementById('quality-options');
+        const videoSrc = "https://flipfit-cdn.akamaized.net/flip_hls/661f570aab9d840019942b80-473e0b/video_h1.m3u8";
 
         submitBtn.addEventListener('click', () => {
             if (passwordInput.value === PASSWORD) {
@@ -63,7 +79,21 @@
                     hls.attachMedia(videoPlayer);
                     hls.on(Hls.Events.MANIFEST_PARSED, function() {
                         videoPlayer.play();
+                        qualityLevels.style.display = 'block';
+                        populateQualityOptions(hls);
                     });
+
+                    hls.on(Hls.Events.LEVEL_SWITCHED, function(event, data) {
+                        const activeQuality = hls.levels[data.level];
+                        qualityOptions.value = activeQuality.height;
+                    });
+
+                    qualityOptions.addEventListener('change', function() {
+                        const selectedHeight = parseInt(this.value);
+                        const selectedLevel = hls.levels.findIndex(level => level.height === selectedHeight);
+                        hls.currentLevel = selectedLevel;
+                    });
+
                 } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
                     videoPlayer.src = videoSrc;
                     videoPlayer.addEventListener('loadedmetadata', function() {
@@ -74,6 +104,23 @@
                 alert('Incorrect password. Please try again.');
             }
         });
+
+        function populateQualityOptions(hls) {
+            while (qualityOptions.firstChild) {
+                qualityOptions.removeChild(qualityOptions.firstChild);
+            }
+
+            hls.levels.forEach((level, index) => {
+                const option = document.createElement('option');
+                option.value = level.height;
+                option.textContent = `${level.height}p`;
+                qualityOptions.appendChild(option);
+            });
+
+            // Select the initial quality level
+            const activeQuality = hls.levels[hls.currentLevel];
+            qualityOptions.value = activeQuality.height;
+        }
     </script>
 </body>
 </html>
