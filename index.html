@@ -45,6 +45,14 @@
             margin-top: 20px;
             font-size: 14px;
             color: #555;
+            text-align: center;
+        }
+        .footer-text {
+            background: linear-gradient(45deg, #ff6b6b, #ff9f43, #feca57, #48dbfb, #1dd1a1, #f368e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 16px;
+            font-weight: bold;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -62,7 +70,7 @@
             <!-- Options will be dynamically populated -->
         </select>
     </div>
-    <footer>Made by Talha</footer>
+    <footer><span class="footer-text">Made by Talha</span></footer>
 
     <script>
         const PASSWORD = "Talha"; // Set your password here
