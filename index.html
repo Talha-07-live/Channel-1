@@ -56,9 +56,12 @@
         }
         .logo {
             position: absolute;
-            top: 20px;
+            top: calc(50% + 50px); /* 50% down from the top */
             left: 50%;
             transform: translateX(-50%);
+        }
+        .logo img {
+            width: 100%; /* Keep the logo size the same */
         }
         footer {
             margin-top: 20px;
@@ -195,6 +198,4 @@
             const activeQuality = hls.levels[hls.currentLevel];
             qualityOptions.value = activeQuality.height;
         }
-    </script>
-</body>
-</html>
+        
