@@ -60,9 +60,6 @@
             left: 50%;
             transform: translateX(-50%);
         }
-        .logo img {
-            width: 80%; /* Resize the logo to 80% of its original size */
-        }
         footer {
             margin-top: 20px;
             font-size: 14px;
@@ -196,5 +193,8 @@
 
             // Select the initial quality level
             const activeQuality = hls.levels[hls.currentLevel];
-            qualityOptions.value
-        
+            qualityOptions.value = activeQuality.height;
+        }
+    </script>
+</body>
+</html>
