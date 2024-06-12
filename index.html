@@ -14,7 +14,6 @@
             background-color: #f0f0f0;
             margin: 0;
             flex-direction: column;
-            position: relative; /* Added for logo positioning */
         }
         #login-form {
             display: flex;
@@ -53,15 +52,6 @@
             padding: 5px;
             border-radius: 5px;
             display: none;
-        }
-        .logo {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .logo img {
-            width: 80%; /* Resize the logo to 80% of its original size */
         }
         footer {
             margin-top: 20px;
@@ -115,9 +105,6 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
-    <div class="logo">
-        <img src="https://s12.gifyu.com/images/SYRXk.png" alt="Logo">
-    </div>
     <div id="login-form">
         <h1>Enter Password</h1>
         <input type="password" id="password" placeholder="Password">
@@ -196,5 +183,8 @@
 
             // Select the initial quality level
             const activeQuality = hls.levels[hls.currentLevel];
-            qualityOptions.value
-            
+            qualityOptions.value = activeQuality.height;
+        }
+    </script>
+</body>
+</html>
