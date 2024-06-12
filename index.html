@@ -21,8 +21,8 @@
             align-items: center;
         }
         #my-video {
-            width: 80%;
-            max-width: 800px;
+            width: 100%;
+            max-width: 1000px;
             display: none;
             border: 5px solid transparent;
             border-radius: 10px;
@@ -101,6 +101,12 @@
                 border-color: #f368e0;
             }
         }
+        .logo {
+            position: absolute;
+            top: 350px;
+            left: 70px;
+            width: 200px; /* Adjust the width as needed */
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -111,6 +117,7 @@
         <button id="submit-btn">Submit</button>
     </div>
     <div class="video-container">
+        <img src="https://s12.gifyu.com/images/SYRXk.png" alt="Logo" class="logo">
         <video id="my-video" controls width="640" height="264"></video>
         <div class="quality-controls">
             <label for="quality-options">Select Quality:</label>
@@ -119,7 +126,7 @@
             </select>
         </div>
     </div>
-    <footer><span class="footer-text">Made by <a href="https://flipfit-cdn.akamaized.net/flip_hls/662aae7a42cd740019b91dec-3e114f/video_h1.m3u8" style="color: inherit; text-decoration: none;">Talha</a></span></footer>
+    <footer><span class="footer-text">Made By <a href="https://flipfit-cdn.akamaized.net/flip_hls/662aae7a42cd740019b91dec-3e114f/video_h1.m3u8" style="color: inherit; text-decoration: none;">Talha</a></span></footer>
 
     <script>
         const PASSWORD = "Talha"; // Set your password here
@@ -130,7 +137,7 @@
         const videoPlayer = document.getElementById('my-video');
         const qualityControls = document.querySelector('.quality-controls');
         const qualityOptions = document.getElementById('quality-options');
-        const videoSrc = "https://flipfit-cdn.akamaized.net/flip_hls/662aae7a42cd740019b91dec-3e114f/video_h1.m3u8";
+        const videoSrc = "https://vkvsd86.mycdn.me/hls/6688554879532.m3u8/sig/X_nVoY6YPoE/srcIp/139.84.142.135/urls/45.136.22.56/expires/1718661829325/clientType/14/srcAg/CHROME_ANDROID/fromCache/1/mid/7451129555756/id/6688554879532/video.m3u8";
 
         submitBtn.addEventListener('click', () => {
             if (passwordInput.value === PASSWORD) {
