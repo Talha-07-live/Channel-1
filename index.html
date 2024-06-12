@@ -24,6 +24,10 @@
             width: 80%;
             max-width: 800px;
             display: none;
+            border: 10px solid transparent;
+            border-radius: 10px;
+            animation: border-animation 5s infinite;
+            background-clip: border-box;
         }
         #password {
             padding: 10px;
@@ -66,6 +70,27 @@
             }
             100% {
                 background-position: 0% 50%;
+            }
+        }
+
+        @keyframes border-animation {
+            0% {
+                border-color: #ff6b6b;
+            }
+            20% {
+                border-color: #ff9f43;
+            }
+            40% {
+                border-color: #feca57;
+            }
+            60% {
+                border-color: #48dbfb;
+            }
+            80% {
+                border-color: #1dd1a1;
+            }
+            100% {
+                border-color: #f368e0;
             }
         }
     </style>
