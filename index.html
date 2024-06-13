@@ -1,10 +1,11 @@
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M3U8 Stream</title>
+    <!-- Video.js CSS -->
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -94,38 +95,18 @@
             animation: gradient-animation 5s infinite;
             background-size: 300%;
         }
-
         @keyframes gradient-animation {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-
         @keyframes border-animation {
-            0% {
-                border-color: #ff6b6b;
-            }
-            20% {
-                border-color: #ff9f43;
-            }
-            40% {
-                border-color: #feca57;
-            }
-            60% {
-                border-color: #48dbfb;
-            }
-            80% {
-                border-color: #1dd1a1;
-            }
-            100% {
-                border-color: #f368e0;
-            }
+            0% { border-color: #ff6b6b; }
+            20% { border-color: #ff9f43; }
+            40% { border-color: #feca57; }
+            60% { border-color: #48dbfb; }
+            80% { border-color: #1dd1a1; }
+            100% { border-color: #f368e0; }
         }
         .logo {
             position: absolute;
@@ -134,7 +115,6 @@
             width: 200px; /* Adjust the width as needed */
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
     <div id="login-form">
@@ -144,7 +124,9 @@
     </div>
     <div class="video-container">
         <img src="https://s12.gifyu.com/images/SYRXk.png" alt="Logo" class="logo">
-        <video id="my-video" controls width="640" height="264"></video>
+        <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="264">
+            <source src="" type="application/x-mpegURL">
+        </video>
         <div class="quality-controls">
             <label for="quality-options">Select Quality:</label>
             <select id="quality-options">
@@ -155,13 +137,17 @@
     </div>
     <footer><span class="footer-text">Made By <a href="" style="color: inherit; text-decoration: none;">Talha</a></span></footer>
 
+    <!-- Video.js script -->
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+    <!-- Video.js HTTP Streaming (VHS) -->
+    <script src="https://cdn.jsdelivr.net/npm/videojs-http-streaming@latest/dist/videojs-http-streaming.min.js"></script>
     <script>
         const PASSWORD = "Talha"; // Set your password here
         const loginForm = document.getElementById('login-form');
         const passwordInput = document.getElementById('password');
         const submitBtn = document.getElementById('submit-btn');
         const videoContainer = document.querySelector('.video-container');
-        const videoPlayer = document.getElementById('my-video');
+        const videoPlayer = videojs('my-video');
         const qualityControls = document.querySelector('.quality-controls');
         const qualityOptions = document.getElementById('quality-options');
         const videoSrc = "https://edge01.iptv.digijadoo.net/live/nagorik_tv/playlist.m3u8?md5=KL0iIWs-P-6Zjf0U2vNVAw&expires=1718448323&user=d477246e9e724f81a011b847457e71c4";
@@ -169,56 +155,14 @@
         submitBtn.addEventListener('click', () => {
             if (passwordInput.value === PASSWORD) {
                 loginForm.style.display = 'none';
+                videoPlayer.src({ type: 'application/x-mpegURL', src: videoSrc });
+                videoPlayer.play();
                 videoPlayer.style.display = 'block';
                 qualityControls.style.display = 'block';
-                
-                if (Hls.isSupported()) {
-                    var hls = new Hls();
-                    hls.loadSource(videoSrc);
-                    hls.attachMedia(videoPlayer);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        videoPlayer.play();
-                        populateQualityOptions(hls);
-                    });
-
-                    hls.on(Hls.Events.LEVEL_SWITCHED, function(event, data) {
-                        const activeQuality = hls.levels[data.level];
-                        qualityOptions.value = activeQuality.height;
-                    });
-
-                    qualityOptions.addEventListener('change', function() {
-                        const selectedHeight = parseInt(this.value);
-                        const selectedLevel = hls.levels.findIndex(level => level.height === selectedHeight);
-                        hls.currentLevel = selectedLevel;
-                    });
-
-                } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-                    videoPlayer.src = videoSrc;
-                    videoPlayer.addEventListener('loadedmetadata', function() {
-                        videoPlayer.play();
-                    });
-                }
             } else {
                 alert('Incorrect password. Please try again.');
             }
         });
-
-        function populateQualityOptions(hls) {
-            while (qualityOptions.firstChild) {
-                qualityOptions.removeChild(qualityOptions.firstChild);
-            }
-
-            hls.levels.forEach((level, index) => {
-                const option = document.createElement('option');
-                option.value = level.height;
-                option.textContent = `${level.height}p`;
-                qualityOptions.appendChild(option);
-            });
-
-            // Select the initial quality level
-            const activeQuality = hls.levels[hls.currentLevel];
-            qualityOptions.value = activeQuality.height;
-        }
 
         function openSupport() {
             window.open("https://t.me/talhasmovie_request_bot", "_blank");
