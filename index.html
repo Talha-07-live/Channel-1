@@ -1,3 +1,33 @@
+play();
+                    });
+                }
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
+        });
+
+        function populateQualityOptions(hls) {
+            while (qualityOptions.firstChild) {
+                qualityOptions.removeChild(qualityOptions.firstChild);
+            }
+
+            hls.levels.forEach((level, index) => {
+                const option = document.createElement('option');
+                option.value = level.height;
+                option.textContent = `${level.height}p`;
+                qualityOptions.appendChild(option);
+            });
+
+            // Select the initial quality level
+            const activeQuality = hls.levels[hls.currentLevel];
+            qualityOptions.value = activeQuality.height;
+        }
+
+        function openSupport() {
+            window.open("https://t.me/talhasmovie_request_bot", "_blank");
+        }
+    </script>
+</body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,6 +50,15 @@
             flex-direction: column;
             align-items: center;
         }
+        #my-video {
+            width: 100%;
+            max-width: 1000px;
+            display: none;
+            border: 5px solid transparent;
+            border-radius: 10px;
+            animation: border-animation 5s infinite;
+            background-clip: border-box;
+        }
         #password {
             padding: 10px;
             font-size: 16px;
@@ -39,11 +78,24 @@
             background-color: #0056b3;
         }
         .video-container {
-            width: 100%;
+            position: relative;
+            width: 80%;
             max-width: 800px;
+        }
+        .quality-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
             display: none;
         }
         .support-button {
+            position: absolute;
+            top: -250px;
+            left: 123px;
             background-color: #28a745;
             color: white;
             border: none;
@@ -52,10 +104,9 @@
             cursor: pointer;
             border-radius: 5px;
             transition: background-color 0.3s ease;
-            margin-top: 10px;
         }
         .support-button:hover {
-            background-color: #218838;
+            background-color: #28a745;
         }
         footer {
             margin-top: 20px;
@@ -84,9 +135,35 @@
                 background-position: 0% 50%;
             }
         }
+
+        @keyframes border-animation {
+            0% {
+                border-color: #ff6b6b;
+            }
+            20% {
+                border-color: #ff9f43;
+            }
+            40% {
+                border-color: #feca57;
+            }
+            60% {
+                border-color: #48dbfb;
+            }
+            80% {
+                border-color: #1dd1a1;
+            }
+            100% {
+                border-color: #f368e0;
+            }
+        }
+        .logo {
+            position: absolute;
+            top: 350px;
+            left: 78px;
+            width: 200px; /* Adjust the width as needed */
+        }
     </style>
-    <!-- Clappr Player script -->
-    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
     <div id="login-form">
@@ -94,8 +171,15 @@
         <input type="password" id="password" placeholder="Password">
         <button id="submit-btn">Submit</button>
     </div>
-    <div class="video-container" id="video-container">
-        <div id="player"></div>
+    <div class="video-container">
+        <img src="https://s12.gifyu.com/images/SYRXk.png" alt="Logo" class="logo">
+        <video id="my-video" controls width="640" height="264"></video>
+        <div class="quality-controls">
+            <label for="quality-options">Select Quality:</label>
+            <select id="quality-options">
+                <!-- Options will be dynamically populated -->
+            </select>
+        </div>
         <button class="support-button" onclick="openSupport()">Support</button>
     </div>
     <footer><span class="footer-text">Made By <a href="" style="color: inherit; text-decoration: none;">Talha</a></span></footer>
@@ -105,29 +189,83 @@
         const loginForm = document.getElementById('login-form');
         const passwordInput = document.getElementById('password');
         const submitBtn = document.getElementById('submit-btn');
-        const videoContainer = document.getElementById('video-container');
+        const videoContainer = document.querySelector('.video-container');
+        const videoPlayer = document.getElementById('my-video');
+        const qualityControls = document.querySelector('.quality-controls');
+        const qualityOptions = document.getElementById('quality-options');
         const videoSrc = "https://edge01.iptv.digijadoo.net/live/nagorik_tv/playlist.m3u8?md5=KL0iIWs-P-6Zjf0U2vNVAw&expires=1718448323&user=d477246e9e724f81a011b847457e71c4";
+        let hls;
 
         submitBtn.addEventListener('click', () => {
             if (passwordInput.value === PASSWORD) {
                 loginForm.style.display = 'none';
-                videoContainer.style.display = 'block';
-
-                const player = new Clappr.Player({
-                    source: videoSrc,
-                    parentId: "#player",
-                    width: '100%',
-                    height: '360px',
-                    autoPlay: true
-                });
+                videoPlayer.style.display = 'block';
+                qualityControls.style.display = 'block';
+                initializePlayer();
+                setInterval(refreshPlayer, 2000);
             } else {
                 alert('Incorrect password. Please try again.');
             }
         });
+
+        function initializePlayer() {
+            if (Hls.isSupported()) {
+                hls = new Hls();
+                hls.loadSource(videoSrc);
+                hls.attachMedia(videoPlayer);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    videoPlayer.play();
+                    populateQualityOptions(hls);
+                });
+
+                hls.on(Hls.Events.LEVEL_SWITCHED, function(event, data) {
+                    const activeQuality = hls.levels[data.level];
+                    qualityOptions.value = activeQuality.height;
+                });
+
+                qualityOptions.addEventListener('change', function() {
+                    const selectedHeight = parseInt(this.value);
+                    const selectedLevel = hls.levels.findIndex(level => level.height === selectedHeight);
+                    hls.currentLevel = selectedLevel;
+                });
+
+            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                videoPlayer.src = videoSrc;
+                videoPlayer.addEventListener('loadedmetadata', function() {
+                    videoPlayer.play();
+                });
+            }
+        }
+
+        function refreshPlayer() {
+            if (hls) {
+                hls.detachMedia();
+                hls.attachMedia(videoPlayer);
+                hls.loadSource(videoSrc);
+            }
+        }
+
+        function populateQualityOptions(hls) {
+            while (qualityOptions.firstChild) {
+                qualityOptions.removeChild(qualityOptions.firstChild);
+            }
+
+            hls.levels.forEach((level, index) => {
+                const option = document.createElement('option');
+                option.value = level.height;
+                option.textContent = `${level.height}p`;
+                qualityOptions.appendChild(option);
+            });
+
+            // Select the initial quality level
+            const activeQuality = hls.levels[hls.currentLevel];
+            qualityOptions.value = activeQuality.height;
+        }
 
         function openSupport() {
             window.open("https://t.me/talhasmovie_request_bot", "_blank");
         }
     </script>
 </body>
-</html>
+    </html>
+                </html>
